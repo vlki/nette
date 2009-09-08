@@ -86,6 +86,25 @@ class Image extends Object
 
 
 
+
+	/**
+	 * Creates blank true color image with transparent background.
+	 * @param  int
+	 * @param  int
+	 * @return resource
+	 */
+	public static function createBlank($width, $height)
+	{
+		$image = imagecreatetruecolor($width, $height);
+		imagealphablending($image, false);
+		$transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
+		imagefilledrectangle($image, 0, 0, $width - 1, $height - 1, $transparent);
+		imagealphablending($image, true);
+		return $image;
+	}
+
+
+
 	/**
 	 * Opens image from file.
 	 * @param  string
@@ -154,7 +173,7 @@ class Image extends Object
 			throw new /*\*/InvalidArgumentException('Image width and height must be greater than zero.');
 		}
 
-		$image = imagecreatetruecolor($width, $height);
+		$image = self::createBlank($width, $height);
 		if (is_array($color)) {
 			$color = imagecolorallocate($image, $color['red'], $color['green'], $color['blue']);
 			imagefilledrectangle($image, 0, 0, $width, $height, $color);
@@ -233,7 +252,7 @@ class Image extends Object
 	public function resize($newWidth, $newHeight, $flags = 0)
 	{
 		list($newWidth, $newHeight) = $this->calculateSize($newWidth, $newHeight, $flags);
-		$newImage = imagecreatetruecolor($newWidth, $newHeight);
+		$newImage = self::createBlank($newWidth, $newHeight);
 		imagecopyresampled($newImage, $this->getImageResource(), 0, 0, 0, 0, $newWidth, $newHeight, $this->getWidth(), $this->getHeight());
 		$this->image = $newImage;
 		return $this;
@@ -321,7 +340,7 @@ class Image extends Object
 		$width = min((int) $width, $this->getWidth() - $left);
 		$height = min((int) $height, $this->getHeight() - $top);
 
-		$newImage = imagecreatetruecolor($width, $height);
+		$newImage = self::createBlank($width, $height);
 		imagecopy($newImage, $this->getImageResource(), 0, 0, $left, $top, $width, $height);
 		$this->image = $newImage;
 		return $this;
@@ -494,5 +513,4 @@ class Image extends Object
 
 		return parent::__call($name, $args);
 	}
-
 }
