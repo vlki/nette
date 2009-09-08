@@ -187,7 +187,7 @@ class Image extends Object
 		if (is_array($color)) {
 			$color += array('alpha' => 0);
 			$color = imagecolorallocatealpha($image, $color['red'], $color['green'], $color['blue'], $color['alpha']);
-			imagefilledrectangle($image, 0, 0, $width, $height, $color);
+			imagefilledrectangle($image, 0, 0, $width - 1, $height - 1, $color);
 		}
 		return new self($image);
 	}
